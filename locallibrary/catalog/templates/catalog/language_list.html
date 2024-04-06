@@ -1,0 +1,82 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<style>
+  .container{
+      width:100%;
+      height:100%;
+      background-color:#aaafff;
+      border-radius: 10px;
+      padding-top:20px;
+    }
+  .lang {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .lang h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .lang table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .lang th, .lang td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+<!--    font-weight:bold;-->
+  }
+
+  .lang th {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .lang .link {
+    color: #28a745;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .lang .link:hover {
+    color: #218838;
+  }
+</style>
+<div class="container">
+  <div class="lang">
+  <h1><strong>Language List</strong></h1>
+    <table>
+    <thead>
+      <tr>
+        <th>Language</th>
+        {% if perms.catalog.can_mark_returned %}
+        <th>Details</th>
+        {% endif %}
+      </tr>
+    </thead>
+      <tbody>
+        {% for language in language_list %}
+        <tr>
+          <td><a href="{{ language.get_absolute_url }}">{{ language }}</a></td>
+<!--          <td>{{ language }}</td>-->
+          {% if perms.catalog.can_mark_returned %}
+          <td><a class="link" href="{{ language.get_absolute_url }}">Details</a></td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <li>There are no languages available.</li>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+

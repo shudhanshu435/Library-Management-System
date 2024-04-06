@@ -1,0 +1,124 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+    .container{
+      width:100%;
+      height:100%;
+      background-color:#aaafff;
+      border-radius: 10px;
+      padding-top:20px;
+    }
+    .books {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .books h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: -36px;
+  }
+
+  .books table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .books th, .books td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+
+  .books th {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .books .link {
+    color: #28a745;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .books .link:hover {
+    color: #218838;
+  }
+
+  /* CSS styles for the search form */
+.search-form {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: stretch;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* Style for the search input */
+.search-input {
+    padding: 7px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    margin-right: 6px;
+}
+
+/* Style for the search button */
+.search-button {
+    padding: 8px 13px;
+    background-color: #007bff;
+    color: black;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+/* Hover effect for the search button */
+.search-button:hover {
+    background-color: #0056b3; /* Change color as needed */
+}
+
+    </style>
+<div class="container">
+  <div class="books">
+  <h1><strong>Book List</strong></h1>
+    <form method="GET" action="{% url 'search' %}" class="search-form">
+    <input type="text" name="query" placeholder="Search..." class="search-input">
+    <button type="submit" class="search-button">Search</button>
+</form>
+
+  {% if book_list %}
+    <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        {% if perms.catalog.can_mark_returned %}
+        <th>Action</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in book_list %}
+      <tr>
+        <td><a href="{{ book.get_absolute_url }}">{{book.title}}</a></td>
+<!--        <td>{{ book.title }}</td>-->
+        <td>{{ book.author }}</td>
+        {% if perms.catalog.can_mark_returned %}
+        <td><a class="link" href="{{ book.get_absolute_url }}">Details</a></td>
+        {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}
+    </div>
+  </div>
+{% endblock %}

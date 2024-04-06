@@ -1,0 +1,83 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<style>
+  .container{
+      width:100%;
+      height:100%;
+      background-color:#aaafff;
+      border-radius: 10px;
+      padding-top:20px;
+    }
+  .genres {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .genres h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .genres table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .genres th, .genres td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+<!--    font-weight:bold;-->
+  }
+
+  .genres th {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .genres .link {
+    color: #28a745;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .genres .link:hover {
+    color: #218838;
+  }
+</style>
+<div class="container">
+  <div class="genres">
+  <h1><strong>Genre List</strong></h1>
+  {% if genre_list %}
+    <table>
+    <thead>
+      <tr>
+        <th>Genre</th>
+        {% if perms.catalog.can_mark_returned %}
+        <th>Details</th>
+        {% endif %}
+      </tr>
+    </thead>
+      <tbody>
+        {% for genre in genre_list %}
+        <tr>
+          <td><a href="{{ genre.get_absolute_url }}">{{ genre }}</a></td>
+<!--          <td>{{ genre }}</td>-->
+          {% if perms.catalog.can_mark_returned %}
+          <td><a class="link" href="{{ genre.get_absolute_url }}">Details</a></td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>There are no genres available.</p>
+  {% endif %}
+</div>
+</div>
+
+{% endblock %}

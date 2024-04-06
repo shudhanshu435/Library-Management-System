@@ -1,0 +1,87 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .renew-book {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-title {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #007bff;
+    font-weight:bold;
+  }
+
+  .borrower-info {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .due-date {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .text-danger {
+    color: #dc3545;
+  }
+
+  .renew-form {
+    margin-top: 20px;
+  }
+
+  .form-table {
+    width: 100%;
+  }
+
+  .form-table th,
+  .form-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .submit-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .submit-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
+  <div class="renew-book">
+    <h1 class="page-title">Renew: {{ book_instance.book.title }}</h1>
+    <p class="borrower-info">Borrower: {{ book_instance.borrower }}</p>
+    <p class="due-date {% if book_instance.is_overdue %}text-danger{% endif %}">Due date: {{ book_instance.due_back }}</p>
+
+    <form action="" method="post" class="renew-form">
+      {% csrf_token %}
+      <table class="form-table">
+        {{ form.as_table }}
+      </table>
+      <input type="submit" value="Renew" class="submit-btn">
+    </form>
+  </div>
+{% endblock %}
+
+

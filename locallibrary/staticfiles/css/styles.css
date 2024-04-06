@@ -1,0 +1,24 @@
+.sidebar-nav {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+/* Example CSS styles */
+.record-counts {
+  margin-top: 20px;
+}
+
+.record-counts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.record-counts li {
+  margin-bottom: 10px;
+}
+
+.record-counts li strong {
+  margin-right: 5px;
+  font-weight: bold;
+}

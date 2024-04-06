@@ -1,0 +1,457 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <!-- Start custom content for the index page -->
+  <style>
+    body {
+      background-color: #f2f2f2; /* Lighter background color */
+      font-family: Arial, sans-serif; /* Use a common font for better compatibility */
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8); /* Dark background color with opacity */
+      padding: 10px 15px; /* Adjusted padding */
+      border-radius: 0; /* Remove border radius for a cleaner look */
+    }
+
+    .navbar-brand {
+      color: #fff; /* White text color */
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .navbar-nav .nav-item .nav-link {
+      color: #fff; /* White text color */
+      font-weight: bold;
+      padding: 10px 15px; /* Adjusted padding */
+      transition: all 0.3s ease;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1); /* Lighter background color on hover */
+      border-radius: 5px;
+    }
+
+    .index-content {
+      background-color: #fff; /* White background color for content */
+      padding: 20px; /* Adjusted padding */
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    }
+
+    .index-content h1,
+    .index-content h2 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .index-content p {
+      font-size: 18px; /* Adjusted font size */
+      line-height: 1.6;
+    }
+
+    .record-counts strong {
+      font-size: 18px; /* Adjusted font size */
+    }
+
+    .fullscreen-bg {
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: hidden; /* Ensure video doesn't overflow */
+<!--    border-radius: 10px; /* Add border radius for a smoother look */-->
+  }
+
+  .fullscreen-bgvideo {
+        width: 100%;
+        height: 323px;
+        object-fit: unset;
+  }
+
+  .fullscreen-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 1; /* Ensure the content is on top of the video */
+    font-size: 36px; /* Increase font size for title */
+    font-weight: bold; /* Make title bold */
+  }
+
+  .index-content {
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    padding: 20px; /* Adjusted padding */
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 41px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  }
+  .front_content {
+    background-color: #fff; /* White background color */
+    padding: 20px; /* Adjusted padding */
+    border-radius: 10px;
+    margin-top: 20px;
+    font-family: ui-sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  }
+
+  .front_content .welcome {
+    font-size: 20px; /* Adjusted font size */
+    margin-bottom: 20px; /* Adjusted margin */
+    color: #333; /* Text color */
+    font-family: ui-sans-serif;
+  }
+
+  .aww{
+        text-align:center;
+        font-size: 20px;
+        font-weight:bold;
+        margin-top:20px;
+  }
+
+
+  .front_content h2 {
+    font-size: 22px; /* Adjusted font size */
+    margin-top: 20px; /* Adjusted margin */
+    margin-bottom: 10px; /* Adjusted margin */
+    color: #333; /* Text color */
+  }
+
+  .front_content p {
+    font-size: 18px; /* Adjusted font size */
+    line-height: 1.6; /* Adjusted line height */
+    margin-bottom: 10px; /* Adjusted margin */
+    color: #555; /* Text color */
+  }
+
+  .front_content .record-counts {
+    margin-bottom: 20px; /* Adjusted margin */
+  }
+
+  .front_content .record-counts li {
+    margin-bottom: 8px; /* Adjusted margin */
+    color: #777; /* Text color */
+  }
+
+  .front_content .record-counts strong {
+    font-weight: bold; /* Make the counts bold */
+    color: #333; /* Text color */
+  }
+.contact{
+    text-align:center;
+
+}
+
+.contact p{
+    font-style:italic;
+    text-align:center;
+
+}
+.dynamic-width {
+    flex: 1;
+    min-width: 150px; /* Set a minimum width to avoid the field collapsing */
+    transition: width 0.2s; /* Add a transition for smoother resizing */
+}
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.margin-box {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.contact-heading {
+    animation: fadeInUp 0.5s ease-out;
+}
+.welcome-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.welcome-heading {
+    font-size: 36px;
+    color: #333;
+}
+
+.welcome-message {
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.library-info {
+    font-size: 18px;
+    color: #777;
+}
+
+.record-counts h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.record-counts ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.record-counts li {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.visits-info {
+    font-size: 18px;
+    color: #777;
+    margin-top: 20px;
+}
+
+.dynamic-width {
+    flex: 1;
+    min-width: 150px;
+    transition: width 0.2s;
+}
+
+.acc{
+    color:blue;
+<!--    font-style:italic;-->
+}
+
+<!--form-->
+form {
+            width: 300px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .right{
+            text-align:right;
+            text-decoration:none;
+            color:white;
+        }
+
+    .cont{
+        font-size:12px;
+    }
+    .footer {
+      background-color: rgba(0, 0, 0, 0.8); /* Dark background color for footer */
+      padding: 20px 0; /* Adjusted padding */
+      color: #fff; /* White text color */
+    }
+
+    .footer span {
+      font-size: 16px;
+      color: red;
+      z-index:1;
+
+    }
+
+@media (max-width: 1140px) {
+    .sidebar {
+        display: none;
+    }
+    .col-sm-10 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+}
+
+
+
+  </style>
+  <!-- Navbar -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="main">
+
+<!--    <a class="navbar-brand" href="#">Library</a>-->
+<!--      <button class="openbtn" onclick="toggleSidebar()">☰ </button>-->
+<a class="navbar-brand" href="#">Library</a>
+    <!-- Hamburger menu icon -->
+
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Books</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Events</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+
+      </ul>
+    </div>
+      </nav>
+<!--      {% if user.is_authenticated %}-->
+<!--          <li >-->
+<!--            <a class="right" href="#">Welcome, <span style="text-transform:uppercase;">{{ user.username }}</span></a>-->
+<!--          </li>-->
+<!--          {% endif %}-->
+
+
+  <!-- Content -->
+<div>
+      <div>
+          <div>
+              <div>
+          <!-- Video and welcome message -->
+          <div class="fullscreen-bg">
+            <video loop muted autoplay playsinline poster="https://www.carnegielibrary.org/wp-content/uploads/2024/03/hours-expansion-loop-still.jpg"
+              class="fullscreen-bgvideo">
+              <source src="https://www.carnegielibrary.org/wp-content/uploads/2024/03/hours-expansion-loop.mp4"
+                type="video/mp4">
+            </video>
+            <div class="fullscreen-title">
+              <div class="ac">Welcome .....</div>
+            </div>
+          </div>
+          <!-- Welcome message and dynamic content -->
+<!--          <div class="front_content">-->
+            <div class="welcome-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="welcome-heading">Welcome to MyLibrary</h1>
+                <p class="welcome-message">A website developed by <em>Shudhanshu Kumar</em></p>
+                <p class="library-info">Explore our vast collection of books and resources.</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="record-counts">
+                    <h2>Record Counts</h2>
+                    <ul>
+                        <li><strong>Books:</strong> {{ num_books }}</li>
+                        <li><strong>Copies:</strong> {{ num_instances }}</li>
+                        <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
+                        <li><strong>Authors:</strong> {{ num_authors }}</li>
+                    </ul>
+                </div>
+                <p class="visits-info">You have visited this page {{ num_visits }} time{{ num_visits|pluralize }}.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<br>
+<div class="container">
+    <div >
+        <div >
+            <div class="margin-box">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="https://img.freepik.com/free-photo/front-view-stacked-books-ladders-with-copy-space-education-day_23-2149241015.jpg" alt="Contact Image" class="img-fluid">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="contact">
+                            <div class="cont">
+                                <h2>Contact Form</h2>
+                                <p>Feel free to get in touch with me. I am here to answer any questions you may have.</p>
+                                <p>Email: sudhanshukumar1242002@gmail.com<br>
+                                    Phone: +91 7544050639<br>
+                                    Address: Vill: Deurwa, P.O.- Sitapur, Dist.- West Champaran, Bihar, India</p>
+                            </div>
+                            <form action="{% url 'contact_view' %}" method="post">
+                                {% csrf_token %}
+                                <label for="contact-name">Your Name</label>
+                                <input type="text" id="contact-name" name="name" placeholder="Enter your name" required>
+                                <br>
+                                <label for="contact-email">Your Email</label>
+                                <input type="email" id="contact-email" name="email" placeholder="Enter your email" required>
+                                <br>
+                                <label for="contact-message">Message</label>
+                                <textarea id="contact-message" name="message" rows="4" placeholder="Enter your message" required></textarea>
+                                <br>
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container text-center">
+      <span class="text-muted">My Library &copy; 2024</span>
+    </div>
+  </footer>
+  <!-- End custom content for the index page -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+

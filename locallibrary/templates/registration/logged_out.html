@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  /* Logged out content */
+  .logged-out-content {
+    text-align: center;
+    margin-top: 50px;
+  }
+
+  .logged-out-message {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+  }
+
+  .login-link {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .login-link:hover {
+    background-color: #45a049;
+  }
+</style>
+
+<div class="logged-out-content">
+  <p class="logged-out-message">You have been logged out!</p>
+  <a href="{% url 'login' %}" class="login-link">Click here to login again</a>
+</div>
+{% endblock %}

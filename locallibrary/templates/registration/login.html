@@ -1,0 +1,106 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  /* Form container */
+  .login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Error message */
+  .error-message {
+    color: #ff6347; /* Red color for error message */
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* Form input fields */
+  input[type="text"],
+  input[type="password"] {
+    width: calc(100% - 22px); /* Adjust for input padding */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #4CAF50; /* Green color on focus */
+  }
+
+  /* Submit button */
+  input[type="submit"] {
+    width: 100%;
+    background-color: #4CAF50; /* Green color for button */
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #45a049; /* Darker green color on hover */
+  }
+
+  /* Lost password link */
+  .lost-password-link {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .lost-password-link a {
+    color: #007bff; /* Blue color for links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .lost-password-link a:hover {
+    color: #0056b3; /* Darker blue color on hover */
+  }
+</style>
+
+<div class="login-container">
+  {% if form.errors %}
+  <p class="error-message">Your username and password didn't match. Please try again.</p>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p class="error-message">Your account doesn't have access to this page. To proceed, please log in with an account that has access.</p>
+    {% else %}
+      <p class="error-message">Please log in to see this page.</p>
+    {% endif %}
+  {% endif %}
+
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+
+    <input type="submit" value="Login">
+    <input type="hidden" name="next" value="{{ next }}">
+  </form>
+
+  <div class="lost-password-link">
+    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+  </div>
+</div>
+{% endblock %}

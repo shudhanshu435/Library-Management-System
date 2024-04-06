@@ -1,0 +1,78 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  .borrowed-books {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-title {
+    font-size: 32px;
+    color: black;
+    font-weight:bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .book-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .book-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .book-item.overdue {
+    background-color: #ffdcdc;
+  }
+
+  .book-title {
+    font-size: 18px;
+    color: clue;
+    text-decoration: none;
+  }
+
+  .book-title:hover {
+    text-decoration: underline;
+  }
+
+  .due-date {
+    font-size: 14px;
+    color: #555;
+    display: block;
+    margin-top: 5px;
+  }
+
+  .no-books-msg {
+    font-size: 18px;
+    color: #555;
+  }
+</style>
+
+  <div class="borrowed-books">
+    <h1 class="page-title">Borrowed Books</h1>
+
+    {% if bookinstance_list %}
+      <ul class="book-list">
+        {% for bookinst in bookinstance_list %}
+          <li class="book-item {% if bookinst.is_overdue %}overdue{% endif %}">
+            <a href="{% url 'book-detail' bookinst.book.pk %}" class="book-title">{{ bookinst.book.title }}</a>
+            <span class="due-date">Due Date:  {{  bookinst.due_back }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-books-msg">There are no books borrowed.</p>
+    {% endif %}
+  </div>
+{% endblock %}

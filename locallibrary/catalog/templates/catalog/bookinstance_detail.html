@@ -1,0 +1,127 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .book-instance-details {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .book-instance-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: black;
+    font-weight:bold;
+    text-align:center;
+
+
+  }
+
+  .book-instance-info {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .book-instance-status {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+
+  .additional-links {
+    list-style: none;
+    padding: 0;
+  }
+
+  .additional-links li {
+    margin-bottom: 10px;
+  }
+
+  .action-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    background-color: transparent;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .action-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+  }
+
+  .sidebar {
+    margin-top: 20px;
+  }
+
+  .sidebar-actions {
+    list-style: none;
+    padding: 0;
+    text-align:right;
+  }
+
+  .sidebar-actions li {
+    margin-bottom: 10px;
+  }
+</style>
+
+  <div class="book-instance-details">
+    <h1 class="book-instance-title">BookInstance: {{ bookinstance.book.title }}</h1>
+
+    <p class="book-instance-info"><strong>Author:</strong> <a href="{{ bookinstance.book.author.get_absolute_url }}">{{ bookinstance.book.author }}</a></p>
+
+    <p class="book-instance-info"><strong>Imprint:</strong> {{ bookinstance.imprint }}</p>
+    <p class="book-instance-status"><strong>Status:</strong> {{ bookinstance.get_status_display }} {% if bookinstance.status != 'a' %} (Due: {{bookinstance.due_back}}){% endif %}</p>
+
+    <hr class="divider">
+
+    <ul class="additional-links">
+      <li><a href="{{ bookinstance.book.get_absolute_url }}">All copies of this book</a></li>
+    </ul>
+  </div>
+
+    {% if perms.catalog.change_bookinstance or perms.catalog.delete_bookinstance %}
+      <hr class="divider">
+
+      <ul class="sidebar-actions">
+        {% if perms.catalog.change_bookinstance %}
+          <li><a href="{% url 'bookinstance-update' bookinstance.id %}" class="action-btn">Update BookInstance</a></li>
+        {% endif %}
+        {% if perms.catalog.delete_bookinstance %}
+          <li><a href="{% url 'bookinstance-delete' bookinstance.id %}" class="action-btn delete-btn">Delete BookInstance</a></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+{% endblock %}
+

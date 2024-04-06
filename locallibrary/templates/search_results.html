@@ -1,0 +1,90 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+    .container{
+      width:100%;
+      height:100%;
+      background-color:#aaafff;
+      border-radius: 10px;
+      padding-top:20px;
+    }
+    .books {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .books h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .books table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .books th, .books td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+
+  .books th {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .books .link {
+    color: #28a745;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .books .link:hover {
+    color: #218838;
+  }
+    </style>
+<div class="container">
+  <div class="books">
+  <h1><strong>Search Results for "{{ query }}"</strong></h1>
+
+  {% if results %}
+    <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        {% if perms.catalog.can_mark_returned %}
+        <th>Action</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in results %}
+      <tr>
+        <td><a href="{{ book.get_absolute_url }}">{{book.title}}</a></td>
+<!--        <td>{{ book.title }}</td>-->
+        <td>{{ book.author }}</td>
+        {% if perms.catalog.can_mark_returned %}
+        <td><a class="link" href="{{ book.get_absolute_url }}">Details</a></td>
+        {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No results found for "{{ query }}".</p>
+  {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+

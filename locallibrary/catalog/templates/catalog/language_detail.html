@@ -1,0 +1,134 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  .language-details {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-title {
+    font-size: 32px;
+    color: black;
+    font-weight:bold;
+    margin-bottom: 20px;
+    text-align:center;
+  }
+
+  .books-section {
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+
+  .book-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .book-item {
+    margin-bottom: 10px;
+  }
+
+  .book-link {
+    font-size: 18px;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .book-link:hover {
+    text-decoration: underline;
+  }
+
+  .no-books-msg {
+    font-size: 18px;
+    color: #555;
+  }
+
+  .genre-actions {
+    margin-top: 20px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+
+  .action-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .action-item {
+    margin-bottom: 10px;
+    text-align:right;
+  }
+
+  .action-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    background-color: transparent;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .action-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+  }
+</style>
+<div class="language-details">
+  <h1 class="page-title">Language: {{ language.name }}</h1>
+
+  <div class="books-section">
+    <h4 class="section-title">Books in {{ language.name }}</h4>
+
+    <ul class="book-list">
+      {% for copy in language.book_set.all %}
+      <li class="book-item">
+        <a href="{{ copy.get_absolute_url }}" class="book-link">{{ copy.title }}</a>
+      </li>
+      {% empty %}
+      <li class="no-books-msg">There are no books in this language.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% if perms.catalog.change_language or perms.catalog.delete_language %}
+  <div class="language-actions">
+    <hr class="divider">
+    <ul class="action-list">
+      {% if perms.catalog.change_language %}
+      <li class="action-item"><a href="{% url 'language-update' language.id %}" class="action-btn">Update Language</a></li>
+      {% endif %}
+      {% if perms.catalog.delete_language %}
+      <li class="action-item"><a href="{% url 'language-delete' language.id %}" class="action-btn delete-btn">Delete Language</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+{% endblock %}

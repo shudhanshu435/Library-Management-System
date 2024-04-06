@@ -1,0 +1,150 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .author-details {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .author-name {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #007bff;
+    color: black;
+    font-weight:bold;
+    text-align:center;
+  }
+
+  .author-dates {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    color: #007bff;
+    margin-bottom: 15px;
+    color: black;
+    font-weight:bold;
+  }
+
+  .book-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-item {
+    margin-bottom: 20px;
+  }
+
+  .book-title {
+    font-size: 20px;
+    color: #007bff;
+    margin-bottom: 5px;
+  }
+
+  .book-summary {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.4;
+  }
+
+  .no-books-msg {
+    font-size: 16px;
+    color: #555;
+  }
+
+  .author-actions {
+    margin-top: 20px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+
+  .action-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .action-item {
+    margin-bottom: 10px;
+    text-align:right;
+  }
+
+  .action-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    background-color: transparent;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .action-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+  }
+</style>
+
+  <div class="author-details">
+    <h1 class="author-name">Author: {{ author }}</h1>
+    <p class="author-dates"> {{ author.date_of_birth }} - {% if author.date_of_death %}{{ author.date_of_death }}{% endif %}</p>
+
+    <div class="books-list">
+      <h4 class="section-title">Books</h4>
+
+      <div class="book-container">
+        {% for book in author.book_set.all %}
+          <div class="book-item">
+            <h2 class="book-title"><a href="{% url 'book-detail' book.pk %}">{{book}}</a></h2>
+            <p class="book-summary">{{book.summary}}</p>
+          </div>
+        {% empty %}
+          <p class="no-books-msg">This author has no books.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% if perms.catalog.change_author or perms.catalog.delete_author %}
+      <div class="author-actions">
+        <hr class="divider">
+        <ul class="action-list">
+          {% if perms.catalog.change_author %}
+            <li class="action-item"><a href="{% url 'author-update' author.id %}" class="action-btn">Update author</a></li>
+          {% endif %}
+          {% if perms.catalog.delete_author %}
+            <li class="action-item"><a href="{% url 'author-delete' author.id %}" class="action-btn delete-btn">Delete author</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+{% endblock %}
+

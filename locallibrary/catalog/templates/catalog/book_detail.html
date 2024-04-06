@@ -1,0 +1,162 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  .book-details {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .book-title {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: black;
+    font-weight:bold;
+    text-align:center;
+  }
+
+  .book-info {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    color: #007bff;
+    margin-bottom: 15px;
+    color: black;
+    font-weight:bold;
+    text-align:center;
+  }
+
+  .copies-list {
+    margin-top: 20px;
+  }
+
+  .copy-item {
+    margin-bottom: 20px;
+  }
+
+  .copy-status {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .due-date {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .copy-info {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .no-copies-msg {
+    font-size: 16px;
+    color: #555;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+
+  .book-actions {
+    margin-top: 20px;
+  }
+
+  .action-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .action-item {
+    margin-bottom: 10px;
+    text-align:right;
+  }
+
+  .action-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    background-color: transparent;
+    color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .action-btn:hover {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .delete-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+  }
+
+  .delete-btn:hover {
+    background-color: #dc3545;
+    color: #fff;
+  }
+</style>
+  <div class="book-details">
+    <h1 class="book-title">Title: {{ book.title }}</h1>
+
+    <p class="book-info"><strong>Author:</strong> <a href="{{ book.author.get_absolute_url }}">{{ book.author }}</a></p>
+    <p class="book-info"><strong>Summary:</strong> {{ book.summary }}</p>
+    <p class="book-info"><strong>ISBN:</strong> {{ book.isbn }}</p>
+    <p class="book-info"><strong>Language:</strong> {{ book.language }}</p>
+    <p class="book-info"><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>
+
+    <div class="copies-list">
+      <h4 class="section-title">Copies</h4>
+
+      {% for copy in book.bookinstance_set.all %}
+        <div class="copy-item">
+          <hr class="divider">
+          <p class="copy-status {% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">
+            {{ copy.get_status_display }}
+          </p>
+          {% if copy.status != 'a' %}
+            <p class="due-date"><strong>Due to be returned:</strong> {{copy.due_back}}</p>
+          {% endif %}
+          <p class="copy-info"><strong>Imprint:</strong> {{copy.imprint}}</p>
+          <p class="copy-info text-muted"><strong>Id:</strong> <a href="{{ copy.get_absolute_url }}">{{copy.id}}</a></p>
+        </div>
+      {% empty %}
+        <p class="no-copies-msg">The library has no copies of this book.</p>
+      {% endfor %}
+    </div>
+  </div>
+{% if perms.catalog.change_book or perms.catalog.delete_book %}
+      <div class="book-actions">
+        <hr class="divider">
+        <ul class="action-list">
+          {% if perms.catalog.change_book %}
+            <li class="action-item"><a href="{% url 'book-update' book.id %}" class="action-btn">Update Book</a></li>
+          {% endif %}
+          {% if perms.catalog.delete_book %}
+            <li class="action-item"><a href="{% url 'book-delete' book.id %}" class="action-btn delete-btn">Delete Book</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% endif %}
+{% endblock %}
+
+

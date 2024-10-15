@@ -52,6 +52,7 @@
 <div class="container">
   <div class="lang">
   <h1><strong>Language List</strong></h1>
+    {% if language_list %}
     <table>
     <thead>
       <tr>
@@ -70,11 +71,13 @@
           <td><a class="link" href="{{ language.get_absolute_url }}">Details</a></td>
           {% endif %}
         </tr>
-        {% empty %}
-        <li>There are no languages available.</li>
         {% endfor %}
       </tbody>
+
     </table>
+    {% else %}
+    <p>There are no languages available.</p>
+    {% endif %}
   </div>
 </div>
 

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,43 +12,65 @@
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
     crossorigin="anonymous">
   <link rel="stylesheet" href="css/mdb.min.css" />
-  <!-- Add additional CSS in static file -->
-  {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
-    <style>
-        body {
+  <style>
+    body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
     }
+
+    .container-fluid {
+      display: flex;
+      height: 100vh; /* Full viewport height */
+    }
+
     .sidebar {
+      position: fixed; /* Fix the sidebar */
+      top: 0;
+      left: 0;
+      width: 250px; /* Sidebar width */
+      height: 100%; /* Full height */
       background-color: #333;
       color: #fff;
       padding: 20px;
-<!--      min-width : 200px;-->
+      overflow-y: auto; /* Scroll if content exceeds height */
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
+
+    .main-content {
+      margin-left: 250px; /* Space for the sidebar */
+      padding: 20px;
+      width: calc(100% - 250px); /* Adjust width */
+      overflow-y: auto; /* Scroll if content exceeds height */
+    }
+
     .sidebar ul {
       list-style-type: none;
       padding: 0;
       margin: 0;
     }
+
     .sidebar li {
       padding: 10px 0;
     }
+
     .sidebar li a {
       color: #fff;
       text-decoration: none;
       transition: all 0.3s ease;
     }
+
     .sidebar li a:hover {
       color: #ffd700;
     }
-    .main-content {
-      padding: 20px;
-    }
+
     .pagination {
       margin-top: 20px;
     }
+
     .pagination a {
       padding: 5px 10px;
       margin: 0 5px;
@@ -58,114 +81,126 @@
       border-radius: 5px;
       transition: all 0.3s ease;
     }
+
     .pagination a:hover {
       background-color: #333;
       color: #fff;
     }
+
     .pagination .page-current {
       background-color: #333;
       color: #fff;
       padding: 5px 10px;
       border-radius: 5px;
     }
-    .abc{
-        background-color: #fedcdccc;
-        padding: 12px;
-        margin: 0px;
-        border-radius: 5px;
-        color: #0000f5;
-        font-weight: bold;
+
+    .abc {
+      background-color: #fedcdccc;
+      padding: 12px;
+      margin: 0px;
+      border-radius: 5px;
+      color: #0000f5;
+      font-weight: bold;
     }
-    .abc .sidebar-nav a{
-        color:blue;
+
+    .abc .sidebar-nav a {
+      color: blue;
     }
+
     .abc .sidebar-nav li a:hover {
       color: red;
     }
-}
 
-    </style>
+    .button:hover {
+        color: red; /* Change to your preferred hover color */
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container-fluid ">
-    <div class="row">
-      <div class="col-sm-2 sidebar" id="sidebar">
-        {% block sidebar %}
-          <div class="abc">
+  <div class="container-fluid">
+    <div class="sidebar" id="sidebar">
+      {% block sidebar %}
+        <div class="abc">
           <ul class="sidebar-nav">
-<!--              <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>-->
             <li><a href="{% url 'index' %}">Home</a></li>
+            {% if user.is_staff %}
             <li><a href="{% url 'bookinstances' %}">All book copies</a></li>
+            {% endif %}
             <li><a href="{% url 'books' %}">All books</a></li>
             <li><a href="{% url 'authors' %}">All authors</a></li>
             <li><a href="{% url 'genres' %}">All genres</a></li>
             <li><a href="{% url 'languages' %}">All languages</a></li>
           </ul>
-          </div>
-          <br>
-          <div class="abc">
+        </div>
+        <br>
+        <div class="abc">
           <ul class="sidebar-nav">
-             {% if user.is_authenticated %}
-               <li style="font-size: 18px; color: #333; background-color: #f9f9f9; padding: 10px; border-radius: 5px;">User: {{ user.get_username|capfirst }}</li>
-
-
-               <li><a href="{% url 'my-borrowed' %}">My borrowed</a></li>
-               <li><a href="{% url 'logout' %}?next={{request.path}}">Logout</a></li>
-             {% else %}
-               <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
-             {% endif %}
-          </ul>
-          </div>
-
-          {% if user.is_staff %}
-          <hr>
-          <div class="abc">
-          <ul class="sidebar-nav">
-              <li style="font-size: 18px; color: #333; background-color: #f9f9f9; padding: 10px; border-radius: 5px;">Staff Section</li>
-
-              <li><a href="{% url 'all-borrowed' %}">All borrowed Books</a></li>
-              {% if perms.catalog.add_genre %}
-                  <li><a href="{% url 'genre-create' %}">Create genre</a></li>
-              {% endif %}
-              {% if perms.catalog.add_language %}
-                  <li><a href="{% url 'language-create' %}">Create language</a></li>
-              {% endif %}
-              {% if perms.catalog.add_author %}
-                  <li><a href="{% url 'author-create' %}">Create author</a></li>
-              {% endif %}
-              {% if perms.catalog.add_book %}
-                 <li><a href="{% url 'book-create' %}">Create book</a></li>
-              {% endif %}
-              {% if perms.catalog.add_bookinstance %}
-                 <li><a href="{% url 'bookinstance-create' %}">Create BookInstance</a></li>
-              {% endif %}
-          </ul>
+            {% if user.is_authenticated %}
+              <li style="font-size: 18px; color: #333; background-color: #f9f9f9; padding: 10px; border-radius: 5px;">User: {{ user.first_name|default:user.username|capfirst }}</li>
+              <li><a href="{% url 'my-borrowed' %}">My borrowed</a></li>
+              <div class="button">
+                <form action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; margin: 0;">Logout</button>
+                </form>
               </div>
-          {% endif %}
-
-        {% endblock %}
-      </div>
-      <div class="col-sm-10 main-content">
-        {% block content %}{% endblock %}
-        {% block pagination %}
-            {% if is_paginated %}
-                <div class="pagination">
-                    <span class="page-links">
-                        {% if page_obj.has_previous %}
-                            <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-                        {% endif %}
-                        <span class="page-current">
-                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                        </span>
-                        {% if page_obj.has_next %}
-                            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-                        {% endif %}
-                    </span>
-                </div>
+            {% else %}
+              <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
             {% endif %}
-          {% endblock %}
-      </div>
+          </ul>
+        </div>
+
+        {% if user.is_staff %}
+        <hr>
+        <div class="abc">
+          <ul class="sidebar-nav">
+            <li style="font-size: 18px; color: #333; background-color: #f9f9f9; padding: 10px; border-radius: 5px;">Staff Section</li>
+            <li><a href="{% url 'borrow_book_for_user' %}">Borrow Book for User</a></li>
+            <li><a href="{% url 'return_book' %}">Return Book</a></li>
+            <li><a href="{% url 'all-borrowed' %}">All borrowed Books</a></li>
+            {% if perms.catalog.add_genre %}
+              <li><a href="{% url 'genre-create' %}">Create genre</a></li>
+            {% endif %}
+            {% if perms.catalog.add_language %}
+              <li><a href="{% url 'language-create' %}">Create language</a></li>
+            {% endif %}
+            {% if perms.catalog.add_author %}
+              <li><a href="{% url 'author-create' %}">Create author</a></li>
+            {% endif %}
+            {% if perms.catalog.add_book %}
+              <li><a href="{% url 'book-create' %}">Create book</a></li>
+            {% endif %}
+            {% if perms.catalog.add_bookinstance %}
+              <li><a href="{% url 'bookinstance-create' %}">Create BookInstance</a></li>
+            {% endif %}
+          </ul>
+        </div>
+        {% endif %}
+
+      {% endblock %}
+    </div>
+    <div class="main-content">
+      {% block content %}
+      <!-- Page-specific content will go here -->
+      {% endblock %}
+      {% block pagination %}
+        {% if is_paginated %}
+          <div class="pagination">
+            <span class="page-links">
+              {% if page_obj.has_previous %}
+                <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+              {% endif %}
+              <span class="page-current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+              {% if page_obj.has_next %}
+                <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+              {% endif %}
+            </span>
+          </div>
+        {% endif %}
+      {% endblock %}
     </div>
   </div>
 

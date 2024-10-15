@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Author, Genre, Book, BookInstance, Language
+from .models import Author, Genre, Book, BookInstance, Language, BorrowHistory
 
 # admin.site.register(Book)
 # admin.site.register(Author)
@@ -51,6 +51,11 @@ class BookAdmin(admin.ModelAdmin):
 admin.site.register(Book, BookAdmin)
 
 
+class BorrowHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'book', 'issue_date', 'return_date', 'action')
+
+admin.site.register(BorrowHistory, BorrowHistoryAdmin)
+
 # Register the Admin classes for BookInstance using the decorator
 @admin.register(BookInstance)
 class BookInstanceAdmin(admin.ModelAdmin):
@@ -71,7 +76,6 @@ class BookInstanceAdmin(admin.ModelAdmin):
             'fields': ('status', 'due_back', 'borrower')
         }),
     )
-
 
 
 from .models import ContactMessage

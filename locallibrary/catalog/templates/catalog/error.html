@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <style>
+        .error-page h1 {
+            color: red; /* Error title color */
+        }
+        .error-page p {
+            color: #333; /* Message text color */
+        }
+    </style>
+
+    <h1>Error!</h1>
+    <p>{{ message }}</p>
+
+    <a href="{% url 'borrow_book_for_user' %}">Try Borrowing Again</a><br/>
+    <a href="{% url 'return_book' %}">Try Returning Again</a><br/>
+</div>
+{% endblock %}

@@ -1,8 +1,15 @@
 from django.shortcuts import render
 
 # Create your views here.
-
-from .models import Book, Author, BookInstance, Genre, Language
+from django.contrib.auth.models import User
+from django.contrib import messages
+from .models import Book, Author, BookInstance, Genre, Language, BorrowHistory
+import datetime
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required, permission_required
+from catalog.forms import RenewBookForm
 
 def index(request):
     """View function for home page of site."""
@@ -43,17 +50,33 @@ def index(request):
 
 
 from django.views import generic
+from django.db.models import Count, Q
 
 class BookListView(generic.ListView):
     """Generic class based view for a list of books"""
     model = Book
     paginate_by = 10
 
+    def get_queryset(self):
+        queryset = Book.objects.annotate(
+            total_copies=Count('bookinstance'),  # Counts all instances of the book
+            available_copies=Count('bookinstance', filter=Q(bookinstance__status='a'))
+        )
+        return queryset
+
+
 class BookDetailView(generic.DetailView):
     """Generic class based detail view for a book"""
     model = Book
 
-#
+    def get_queryset(self):
+        queryset = Book.objects.annotate(
+            total_copies=Count('bookinstance'),  # Counts all instances of the book
+            available_copies=Count('bookinstance', filter=Q(bookinstance__status='a'))
+        )
+        return queryset
+
+
 def book_detail_view(request, primary_key):
     try:
         book = Book.objects.get(pk=primary_key)
@@ -64,11 +87,11 @@ def book_detail_view(request, primary_key):
 
 
 class AuthorListView(generic.ListView):
-    model=Author
+    model = Author
     paginate_by = 10
 
 class AuthorDetailView(generic.DetailView):
-    model=Author
+    model = Author
 
 def author_detail_view(request, primary_key):
     try:
@@ -77,7 +100,6 @@ def author_detail_view(request, primary_key):
         raise Http404('Author does not exist')
 
     return render(request, 'catalog/author_detail.html', context={'author': author})
-
 
 
 class GenreDetailView(generic.DetailView):
@@ -108,7 +130,7 @@ class BookInstanceDetailView(generic.DetailView):
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
     """Generic class-based view listing books on loan to current user."""
     model = BookInstance
     template_name = 'catalog/bookinstance_list_borrowed_user.html'
@@ -121,12 +143,12 @@ class LoanedBooksByUserListView(LoginRequiredMixin,generic.ListView):
             .order_by('due_back')
         )
 
-#Added as ap art of challenege
+# Added as a part of challenge
 from django.contrib.auth.mixins import PermissionRequiredMixin
 # from django.views.generic import TemplateView
 
 class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
-    """Generic class based view listing all books on loan. Only vosoble to users with can_mark_returned permission."""
+    """Generic class based view listing all books on loan. Only visible to users with can_mark_returned permission."""
     model = BookInstance
     permission_required = 'catalog.can_mark_returned'
     template_name = 'catalog/bookinstance_list_borrowed_all.html'
@@ -136,13 +158,6 @@ class LoanedBooksAllListView(PermissionRequiredMixin, generic.ListView):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
 
 
-import datetime
-
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required, permission_required
-from catalog.forms import RenewBookForm
 @login_required
 @permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request, pk):
@@ -175,6 +190,88 @@ def renew_book_librarian(request, pk):
 
     return render(request, 'catalog/book_renew_librarian.html', context)
 
+
+@login_required
+def borrow_book_for_user(request):
+    if request.method == 'POST':
+        book_id = request.POST['book_id']
+        user_id = request.POST['user_id']
+
+        book_instance = get_object_or_404(BookInstance, id=book_id)
+        user = get_object_or_404(User, id=user_id)
+
+        # Now check if book is available for borrowing
+        if book_instance.status == 'a' and book_instance.book.quantity > 0:
+            BorrowHistory.objects.create(
+                user=user,
+                book=book_instance.book,
+                action='borrow'
+            )
+            book_instance.status = 'o'  # on loan
+            book_instance.borrower = user
+
+            # Set due_back date (e.g., 2 weeks from now)
+            due_back_date = datetime.date.today() + datetime.timedelta(weeks=3)
+            book_instance.due_back = due_back_date
+
+            # Save changes to BookInstance
+            book_instance.save()
+
+            book_instance.book.quantity -= 1
+            book_instance.book.save()
+
+            return render(request, 'catalog/success.html')
+        else:
+            return render(request, 'catalog/error.html', {'message': 'Book not available'})
+
+    available_books = BookInstance.objects.filter(status='a', book__quantity__gt=0)
+    users = User.objects.all()
+
+    return render(request, 'catalog/librarian_borrow_book.html', {
+        'available_books': available_books,
+        'users': users,
+    })
+
+
+@login_required
+def return_book(request):
+    if request.method == 'POST':
+        book_id = request.POST['book_id']
+        book_instance = get_object_or_404(BookInstance, id=book_id)
+
+        # Check if the book is currently borrowed
+        if book_instance.status == 'o':  # Assuming 'b' means borrowed
+            # Update BookInstance status to available
+            book_instance.status = 'a'  # Assuming 'o' means available
+            borrower_user = book_instance.borrower  # Store the borrower before clearing it
+            book_instance.borrower = None  # Clear the borrower field
+
+            # Increase the quantity of the book by 1
+            book_instance.book.quantity += 1
+
+            # Save changes to both BookInstance and Book models
+            book_instance.save()
+            book_instance.book.save()
+
+            # Log the return action in BorrowingHistory
+            BorrowHistory.objects.create(
+                user=borrower_user,
+                book=book_instance.book,
+                action='return',
+                return_date=datetime.date.today()  # Set today's date as return date
+            )
+
+            return render(request, 'catalog/success.html')  # Redirect to a success page or back to list
+
+        else:
+            return render(request, 'catalog/error.html', {'message': 'This book is not currently borrowed.'})
+
+    # For GET request: Show currently borrowed books for returning
+    borrowed_books = BookInstance.objects.filter(status='o')
+
+    return render(request, 'catalog/librarian_return_book.html', {
+        'borrowed_books': borrowed_books,
+    })
 
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -287,7 +384,6 @@ class BookInstanceDelete(PermissionRequiredMixin, DeleteView):
     permission_required = 'catalog.delete_bookinstance'
 
 
-# views.py
 
 from django.shortcuts import render
 from .forms import ContactForm
@@ -314,13 +410,24 @@ def contact_view(request):
     return render(request, 'index.html', {'form': form})
 
 
-# app/views.py
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from .forms import CustomerUserCreationForm
+def register(request):
+    if request.method == 'POST':
+        form = CustomerUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Registered successfully.')
+            return redirect('login')  # Redirect to login page after successful registration
+    else:
+        form = CustomerUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
 
 def logout_view(request):
     logout(request)
-    return redirect('index')  # Redirect to the home page after logout
+    return render(request, 'registration/logged_out.html')  # Redirect to the home page after logout
 
 def search(request):
     query = request.GET.get('query')
@@ -328,7 +435,7 @@ def search(request):
         results = Book.objects.filter(title__icontains=query)
     else:
         results = None
-    return render(request, 'search_results.html',{'results':results, 'query': query})
+    return render(request, 'search_results.html', {'results': results, 'query': query})
 
 
 from django.db.models import Q

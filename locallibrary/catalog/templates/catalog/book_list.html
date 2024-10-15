@@ -97,21 +97,20 @@
     <thead>
       <tr>
         <th>Title</th>
+        <th>Total Copies</th>
+        <th>Copies Available</th>
         <th>Author</th>
-        {% if perms.catalog.can_mark_returned %}
         <th>Action</th>
-        {% endif %}
       </tr>
     </thead>
     <tbody>
       {% for book in book_list %}
       <tr>
         <td><a href="{{ book.get_absolute_url }}">{{book.title}}</a></td>
-<!--        <td>{{ book.title }}</td>-->
+        <td>{{ book.total_copies }}</td>
+        <td>{{ book.available_copies }}</td>
         <td>{{ book.author }}</td>
-        {% if perms.catalog.can_mark_returned %}
         <td><a class="link" href="{{ book.get_absolute_url }}">Details</a></td>
-        {% endif %}
         </tr>
       {% endfor %}
     </tbody>

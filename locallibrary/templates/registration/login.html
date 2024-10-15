@@ -1,106 +1,198 @@
-{% extends "base_generic.html" %}
+<!--{% extends "base_generic.html" %}-->
+{% load static %}
+<!--{% block content %}-->
 
-{% block content %}
-<style>
-  /* Form container */
-  .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light gray background */
+        }
 
-  /* Error message */
-  .error-message {
-    color: #ff6347; /* Red color for error message */
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
+        /* Centering and styling the login container */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white; /* White background for the form */
+            border-radius: 5px; /* Slightly rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
 
-  /* Form input fields */
-  input[type="text"],
-  input[type="password"] {
-    width: calc(100% - 22px); /* Adjust for input padding */
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-  }
+        /* Header styling */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-  input[type="text"]:focus,
-  input[type="password"]:focus {
-    border-color: #4CAF50; /* Green color on focus */
-  }
+        header h1 {
+            font-size: 22px;
+            color: #333;
+        }
 
-  /* Submit button */
-  input[type="submit"] {
-    width: 100%;
-    background-color: #4CAF50; /* Green color for button */
-    color: white;
-    padding: 12px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+        /* Form group styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-  input[type="submit"]:hover {
-    background-color: #45a049; /* Darker green color on hover */
-  }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
 
-  /* Lost password link */
-  .lost-password-link {
-    text-align: center;
-    margin-top: 10px;
-  }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-  .lost-password-link a {
-    color: #007bff; /* Blue color for links */
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
+        /* Error message styling */
+        .error-message {
+            color: red;
+            font-size: 0.875em;
+            margin-top: 5px;
+        }
 
-  .lost-password-link a:hover {
-    color: #0056b3; /* Darker blue color on hover */
-  }
-</style>
+        /* Submit button styling */
+        .submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff; /* Blue background */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-<div class="login-container">
-  {% if form.errors %}
-  <p class="error-message">Your username and password didn't match. Please try again.</p>
-  {% endif %}
+        .submit-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
 
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p class="error-message">Your account doesn't have access to this page. To proceed, please log in with an account that has access.</p>
-    {% else %}
-      <p class="error-message">Please log in to see this page.</p>
-    {% endif %}
-  {% endif %}
+        /* Lost password link styling */
+        .lost-password-link {
+            text-align: center;
+            margin-top: 10px;
+        }
 
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
+        .lost-password-link a {
+            color: #007bff; /* Blue link color */
+            text-decoration: none;
+        }
 
-    <input type="submit" value="Login">
-    <input type="hidden" name="next" value="{{ next }}">
-  </form>
+        .lost-password-link a:hover {
+            text-decoration: underline;
+        }
 
-  <div class="lost-password-link">
-    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-  </div>
-</div>
-{% endblock %}
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* CSS Styling */
+        .messages {
+            list-style-type: none; /* Remove default bullet points */
+            padding: 0; /* Remove default padding */
+            margin: 10px 0; /* Add some margin to space it out */
+            color: blue;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <header>
+            <h1>Login</h1>
+        </header>
+
+        {% if form.errors %}
+        <p class="error-message">Your username and password didn't match. Please try again.</p>
+        {% endif %}
+
+        {% if next %}
+        <p class="error-message">
+            {% if user.is_authenticated %}
+                Your account doesn't have access to this page. To proceed, please log in with an account that has access.
+            {% elif messages %}
+                {% for message in messages %}
+                  <div class="alert">{{ message }}</div>
+                {% endfor %}
+            {% else %}
+                Please log in to see this page.
+            {% endif %}
+        </p>
+        {% endif %}
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error-message">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="submit-button">Login</button>
+<!--            <input type="hidden" name="next" value="{{ next }}">-->
+        </form>
+
+        <div class="lost-password-link">
+            <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+        </div>
+
+
+        <div class="login-link">
+            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html>
+
+<!--{% endblock %}-->

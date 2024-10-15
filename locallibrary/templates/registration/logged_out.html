@@ -1,6 +1,4 @@
-{% extends "base_generic.html" %}
 
-{% block content %}
 <style>
   /* Logged out content */
   .logged-out-content {
@@ -16,7 +14,7 @@
 
   .login-link {
     display: inline-block;
-    background-color: #4CAF50;
+    background-color: #007bff;
     color: white;
     padding: 12px 20px;
     text-decoration: none;
@@ -25,7 +23,7 @@
   }
 
   .login-link:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
   }
 </style>
 
@@ -33,4 +31,3 @@
   <p class="logged-out-message">You have been logged out!</p>
   <a href="{% url 'login' %}" class="login-link">Click here to login again</a>
 </div>
-{% endblock %}

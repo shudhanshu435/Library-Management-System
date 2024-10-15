@@ -1,8 +1,9 @@
 from django.db import models
 
-from django.urls import reverse # Used to generate URLs by reversing the URL patterns
+from django.urls import reverse  # Used to generate URLs by reversing the URL patterns
 from django.conf import settings
 from datetime import date
+from django.contrib.auth.models import User
 
 class Genre(models.Model):
     """Model representing a book genre."""
@@ -44,9 +45,10 @@ class Book(models.Model):
     author = models.ForeignKey('Author', on_delete=models.RESTRICT, null=True)
     # Foreign Key used because book can only have one author, but authors can have multiple books.
     # Author as a string rather than object because it hasn't been declared yet in file.
+    quantity = models.PositiveIntegerField(default=0)  # number of copies available
 
     summary = models.TextField(
-        max_length=1000, help_text="Enter a brief description of the book")
+        max_length=1000, help_text="Enter a brief description of the book", null=True, blank=True)
     isbn = models.CharField('ISBN', max_length=13,
                             unique=True,
                             help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn'
@@ -90,8 +92,8 @@ class BookInstance(models.Model):
     """Model representing a specific copy of a book (i.e. that can be borrowed from the library)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text="Unique ID for this particular book across whole library")
-    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
-    imprint = models.CharField(max_length=200)
+    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True, related_name='bookinstance')
+    imprint = models.CharField(max_length=200, null=True, blank=True)
     due_back = models.DateField(null=True, blank=True)
     borrower = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
@@ -101,17 +103,15 @@ class BookInstance(models.Model):
         """Determines if the book is overdue based on due date and current date."""
         return bool(self.due_back and date.today() > self.due_back)
     LOAN_STATUS = (
-        ('d', 'Maintenance'),
         ('o', 'On loan'),
         ('a', 'Available'),
-        ('r', 'Reserved'),
     )
 
     status = models.CharField(
         max_length=1,
         choices=LOAN_STATUS,
         blank=True,
-        default='d',
+        default='m',
         help_text='Book availability',
     )
 
@@ -126,7 +126,6 @@ class BookInstance(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.id} ({self.book.title})'
-
 
 
 class Author(models.Model):
@@ -149,7 +148,20 @@ class Author(models.Model):
 
 # models.py
 
-from django.db import models
+class BorrowHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    issue_date = models.DateField(auto_now_add=True)
+    return_date = models.DateField(null=True, blank=True)
+    action = models.CharField(max_length=10, choices=[('borrow', 'Borrow'), ('return', 'Return')])
+
+    def __str__(self):
+        return f"{self.user.username} borrowed {self.book.title} on {self.issue_date}"
+
+    class Meta:
+        verbose_name = "Borrow History"
+        verbose_name_plural = "Borrow Histories"
+
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)

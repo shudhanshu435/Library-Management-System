@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Success{% endblock %}
+
+{% block content %}
+<div class="success-page">
+    <style>
+       .success-page h1 {
+           color: green; /* Success title color */
+       }
+       .success-page p {
+           color:#333; /* Message text color */
+       }
+       .success-page a {
+           display:inline-block; 
+           margin-top:10px; 
+           text-decoration:none; 
+           color:#35424a; 
+           border:none; 
+           padding:.5em .75em; 
+           background:#e7e7e7; 
+           border-radius:.25em; 
+       }
+       .success-page a:hover {
+           background:#dcdcdc; /* Change on hover */
+       }
+   </style> 
+
+   <h1>Success!</h1> 
+   <p>The action was completed successfully.</p> 
+   <a href="{% url 'borrow_book_for_user' %}">Borrow Another Book</a><br/>
+   <a href="{% url 'return_book' %}">Return Another Book</a><br/>
+</div>
+{% endblock %}

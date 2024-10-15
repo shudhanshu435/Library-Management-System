@@ -102,7 +102,10 @@
 
     <p class="book-instance-info"><strong>Imprint:</strong> {{ bookinstance.imprint }}</p>
     <p class="book-instance-status"><strong>Status:</strong> {{ bookinstance.get_status_display }} {% if bookinstance.status != 'a' %} (Due: {{bookinstance.due_back}}){% endif %}</p>
-
+    {% if bookinstance.status == 'o' %}
+        <p class="book-instance-info"><strong>Borrowed by:</strong> {{ bookinstance.borrower }}</p>
+    {% endif %}
+    <p class="book-instance-info"><strong>Id:</strong> {{ bookinstance.id }}</p>
     <hr class="divider">
 
     <ul class="additional-links">

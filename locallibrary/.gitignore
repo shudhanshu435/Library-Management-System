@@ -1,0 +1,13 @@
+# Ignore environment variables
+.env
+
+# Ignore Python bytecode
+*.pyc
+__pycache__/
+
+# Ignore virtual environments
+venv/
+library/
+
+# Ignore PyCharm files
+.idea/

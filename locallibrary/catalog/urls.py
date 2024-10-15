@@ -29,7 +29,7 @@ urlpatterns += [
     path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book-delete'),
 ]
 
-# Add URLConf to list, view, create, update, and delete genre
+# Add URLConf to list, view, create, update, and delete genre1
 urlpatterns += [
     path('genres/', views.GenreListView.as_view(), name='genres'),
     path('genre/<int:pk>', views.GenreDetailView.as_view(), name='genre-detail'),
@@ -63,6 +63,15 @@ urlpatterns += [
 ]
 
 # urls.py
+from django.urls import path
+from .views import borrow_book_for_user, return_book
+from django.views.generic import TemplateView
+
+urlpatterns += [
+    path('librarian/borrow/', borrow_book_for_user, name='borrow_book_for_user'),
+    path('librarian/return/', return_book, name='return_book'),
+    path('success/', TemplateView.as_view(template_name='success.html'), name='success_page'),
+]
 
 from .views import contact_view
 
@@ -70,6 +79,7 @@ urlpatterns += [
     path('contact/', contact_view, name='contact_view'),
     # Add other URL patterns as needed
     path('logout/', views.logout_view, name='logout'),
+    path('register/', views.register, name='register'),
 ]
 
 urlpatterns += [

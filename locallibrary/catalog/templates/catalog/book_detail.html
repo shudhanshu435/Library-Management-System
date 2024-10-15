@@ -123,18 +123,23 @@
     <p class="book-info"><strong>ISBN:</strong> {{ book.isbn }}</p>
     <p class="book-info"><strong>Language:</strong> {{ book.language }}</p>
     <p class="book-info"><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>
-
+    <p class="book-info"><strong>Total Copies:</strong> {{ book.total_copies }}</p>
+    <p class="book-info"><strong>Available Copies:</strong> {{ book.available_copies }}</p>
     <div class="copies-list">
+      {% if user.is_staff %}
       <h4 class="section-title">Copies</h4>
 
-      {% for copy in book.bookinstance_set.all %}
+      {% for copy in book.bookinstance.all %}
         <div class="copy-item">
           <hr class="divider">
-          <p class="copy-status {% if copy.status == 'a' %}text-success{% elif copy.status == 'd' %}text-danger{% else %}text-warning{% endif %}">
+          <p class="copy-status {% if copy.status == 'a' %}text-success{% else %}text-warning{% endif %}">
             {{ copy.get_status_display }}
           </p>
           {% if copy.status != 'a' %}
             <p class="due-date"><strong>Due to be returned:</strong> {{copy.due_back}}</p>
+          {% endif %}
+          {% if copy.status == 'o' %}
+          <p class="due-date"><strong>Borrowed by:</strong> {{copy.borrower}}</p>
           {% endif %}
           <p class="copy-info"><strong>Imprint:</strong> {{copy.imprint}}</p>
           <p class="copy-info text-muted"><strong>Id:</strong> <a href="{{ copy.get_absolute_url }}">{{copy.id}}</a></p>
@@ -142,8 +147,11 @@
       {% empty %}
         <p class="no-copies-msg">The library has no copies of this book.</p>
       {% endfor %}
+      {% endif %}
     </div>
   </div>
+
+
 {% if perms.catalog.change_book or perms.catalog.delete_book %}
       <div class="book-actions">
         <hr class="divider">

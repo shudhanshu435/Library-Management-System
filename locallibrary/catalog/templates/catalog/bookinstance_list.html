@@ -56,39 +56,63 @@
     </style>
 <div class="container">
     <div class="copies">
-  <h1><strong>Book Copies in Library</strong></h1>
+        <h1><strong>Book Copies in Library</strong></h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Due Back</th>
-        {% if perms.catalog.can_mark_returned %}
-        <th>Borrower</th>
-        <th>Action</th>
-        {% endif %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for bookinst in bookinstance_list %}
-      <tr class="{% if bookinst.is_overdue %}text-danger{% endif %}">
-        <td><a href="{% url 'bookinstance-detail' bookinst.pk %}">{{bookinst.book.title}}</a></td>
-<!--        <td>{{bookinst.book.title}}</td>-->
-        <td>{{ bookinst.due_back }}</td>
-        {% if user.is_staff %}
-        <td>{{ bookinst.borrower }}</td>
-        {% endif %}
-        {% if perms.catalog.can_mark_returned %}
-        <td><a class="renew-link" href="{% url 'renew-book-librarian' bookinst.id %}">Renew</a></td>
-        {% endif %}
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="{% if perms.catalog.can_mark_returned %}4{% else %}3{% endif %}">There are no book copies available.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Due Back</th>
+                    <th scope="col">Borrower</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bookinst in bookinstance_list %}
+                    {% if user.is_staff or bookinst.borrower == user %}
+                        <tr class="{% if bookinst.is_overdue and bookinst.status != 'd' %}text-danger{% endif %}">
+                            <td><a href="{% url 'bookinstance-detail' bookinst.pk %}">{{ bookinst.book.title }}</a></td>
+                            <td>
+                                {% if bookinst.status == 'o' %}
+                                    On Loan
+                                {% else %}
+                                    Available
+                                {% endif %}
+                            </td>
+                                <td>
+                                    {% if bookinst.status == 'o' %}
+                                        {{ bookinst.due_back|date:"d M Y" }}
+                                    {% else %}
+                                        ---
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if bookinst.status == 'o' %}
+                                        {{ bookinst.borrower|capfirst }}
+                                    {% else %}
+                                        ---
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if bookinst.status == 'o' %}
+                                        <a class="renew-link" href="{% url 'renew-book-librarian' bookinst.id %}">Renew</a>
+                                    {% else %}
+                                        --
+                                    {% endif %}
+                                </td>
+                        </tr>
+                    {% endif %}
+                {% empty %}
+                <tr>
+                    <td colspan="{% if user.is_staff %}5{% else %}2{% endif %}">There are no book copies available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
+
+
+
 {% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Return Book{% endblock %}
+
+{% block content %}
+<div class="return-page">
+    <style>
+        .return-page h1 {
+            color: #35424a;
+        }
+        .return-page form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .return-page label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .return-page select, .return-page input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .return-page input[type="submit"] {
+            background-color: #35424a;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .return-page input[type="submit"]:hover {
+            background-color: #4c5b69; /* Darker shade on hover */
+        }
+    </style>
+
+    <h1>Return Book</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="book_id">Select Book:</label>
+        <select name="book_id" id="book_id" required>
+            {% for book in borrowed_books %}
+                <option value="{{ book.id }}">
+                    {{ book.book.title }} (Borrowed by: {{ book.borrower.username }})
+                </option>
+            {% endfor %}
+        </select>
+
+       <input type="submit" value="Return Book">
+    </form>
+
+    {% if error_message %}
+    <p class="error-message">{{ error_message }}</p>
+    {% endif %}
+
+    {% if borrowed_books %}
+    <h2>Currently Borrowed Books</h2>
+    <table style="width:100%; border-collapse: collapse;">
+       <thead>
+           <tr style="background-color:#35424a; color:white;">
+               <th>Book Title</th>
+               <th>Borrower</th>
+               <th>Status</th>
+           </tr>
+       </thead>
+       <tbody>
+           {% for book in borrowed_books %}
+               <tr style="border-bottom:1px solid #ddd;">
+                   <td>{{ book.book.title }}</td>
+                   <td>{{ book.borrower.username }}</td>
+                   <td>{{ book.status }}</td> <!-- Display current status -->
+               </tr>
+           {% endfor %}
+       </tbody>
+   </table>
+   {% else %}
+   <p>No books are currently borrowed.</p>
+   {% endif %}
+</div>
+{% endblock %}

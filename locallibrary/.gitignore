@@ -1,5 +1,5 @@
 # Ignore environment variables
-.env
+locallibrary/.env
 
 # Ignore Python bytecode
 *.pyc

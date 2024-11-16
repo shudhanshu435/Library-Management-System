@@ -15,5 +15,5 @@ A robust and user-friendly Library Management System built with Django to facili
 
 - **Backend**: Django
 - **Frontend**: HTML, CSS, JavaScript
-- **Database**: MySQL
+- **Database**: SQLite
 - **Version Control**: Git
